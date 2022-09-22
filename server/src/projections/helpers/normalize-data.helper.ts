@@ -1,5 +1,5 @@
 import {FinancialEntry} from "../dtos/financial-entry.dto";
-import {Point} from "../dtos/point.interface";
+import {Point} from "../interfaces/point.interface";
 import {addMonthsToDate} from "./add-month-to-date.helper";
 
 export const ONE_DAY_MS = 24 * 60 * 60 * 1000;

@@ -1,5 +1,5 @@
 import {InterpolationStrategy} from "./interpolation.strategy";
-import {Point} from "../dtos/point.interface";
+import {Point} from "../interfaces/point.interface";
 
 export class LagrangeStrategy extends InterpolationStrategy {
     private getInterpolatedPoint(x: number, knownPoints: Point[]): Point {

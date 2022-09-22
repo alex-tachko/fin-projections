@@ -4,4 +4,5 @@ export enum AlgorithmEnum {
     MA3 = 'ma3',
     MA4 = 'ma4',
     WEIGHTED_MA4 = 'w_ma4',
+    LINEAR = 'linear',
 }

@@ -6,6 +6,7 @@ import {AlgorithmEnum} from "./enum/algorithm.enum";
 import {InterpolatePayload} from "./dtos/interpolate-request.dto";
 import {IDataRow} from "./interfaces/data-row.interface";
 import {MovingAverageStrategy} from "./strategies/moving-average.strategy";
+import {LinearStrategy} from "./strategies/linear.strategy";
 
 @ApiTags('Financial Projections')
 @Controller('projections')
@@ -30,6 +31,7 @@ export class ProjectionsController {
             [AlgorithmEnum.MA3]: new MovingAverageStrategy(3),
             [AlgorithmEnum.MA4]: new MovingAverageStrategy(4),
             [AlgorithmEnum.WEIGHTED_MA4]: new MovingAverageStrategy(4, true),
+            [AlgorithmEnum.LINEAR]: new LinearStrategy(),
         }
 
         const strategy = strategyMap[algo];
