@@ -50,9 +50,7 @@ export class ProjectionsService {
         const normalizedDatesToPredict = normalizeDates(datesToPredict);
 
         const points = normalizeData(aggregatedByMonthData);
-        const interpolatedPoints = [];
-
-        normalizedDatesToPredict.forEach(x => interpolatedPoints.push(strategy.getInterpolatedPoint(x, points)));
+        const interpolatedPoints = strategy.getInterpolatedPoints(normalizedDatesToPredict, points);
 
         return revertNormalization(interpolatedPoints, data[0].date);
     }
