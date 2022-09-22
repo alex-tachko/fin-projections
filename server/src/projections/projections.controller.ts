@@ -66,12 +66,27 @@ export class ProjectionsController {
             { header: 1 }
         );
 
-        const year2 =
+        const year =
             excel.originalname.substr(0, excel.originalname.lastIndexOf('.')) ||
             excel.originalname;
-        const parsedData = parseData(data, frequency, year2);
+        const parsedData = parseData(data, frequency, year);
 
-        return parsedData;
+        const strategyMap = {
+            [AlgorithmEnum.LAGRANGE]: new LagrangeStrategy(),
+            [AlgorithmEnum.MA2]: new MovingAverageStrategy(2),
+            [AlgorithmEnum.MA3]: new MovingAverageStrategy(3),
+            [AlgorithmEnum.MA4]: new MovingAverageStrategy(4),
+            [AlgorithmEnum.WEIGHTED_MA4]: new MovingAverageStrategy(4, true),
+            [AlgorithmEnum.LINEAR]: new LinearStrategy(),
+        };
+
+        const strategy = strategyMap[algo];
+
+        const interpolatedMetrics = parsedData.map(({ title, cells }) => {
+            return this.service.getInterpolatedData(strategy, title, cells);
+        });
+
+        return interpolatedMetrics;
     }
 }
 
@@ -92,11 +107,7 @@ const monthsEnds = [
 
 const quartersEnds = ['-03-01', '-06-01', '-09-01', '-12-01'];
 
-const parseData = (
-    data: any,
-    frequency: FrequencyEnum,
-    year: string
-): FinancialEntry[] => {
+const parseData = (data: any, frequency: FrequencyEnum, year: string) => {
     const datesEnds =
         frequency === FrequencyEnum.MONTHLY ? monthsEnds : quartersEnds;
     const dates = datesEnds.map((dateEnd) => new Date(`${year}${dateEnd}`));

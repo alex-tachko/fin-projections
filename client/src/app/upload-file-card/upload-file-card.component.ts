@@ -6,6 +6,15 @@ import {
   FileUploadService,
 } from '../services/file-upload.service';
 
+const AlgorithmsOptions = [
+  { value: AlgorithmEnum.LAGRANGE, viewValue: AlgorithmEnum.LAGRANGE },
+  { value: AlgorithmEnum.MA2, viewValue: AlgorithmEnum.MA2 },
+  { value: AlgorithmEnum.MA3, viewValue: AlgorithmEnum.MA3 },
+  { value: AlgorithmEnum.MA4, viewValue: AlgorithmEnum.MA4 },
+  { value: AlgorithmEnum.WEIGHTED_MA4, viewValue: AlgorithmEnum.WEIGHTED_MA4 },
+  { value: AlgorithmEnum.LINEAR, viewValue: AlgorithmEnum.LINEAR },
+];
+
 @Component({
   selector: 'app-upload-file-card',
   templateUrl: './upload-file-card.component.html',
@@ -14,6 +23,7 @@ import {
 export class UploadFileCardComponent implements OnInit {
   public file: File | null = null;
   public predictionType = AlgorithmEnum.LAGRANGE;
+  public algos = AlgorithmsOptions;
   constructor(private fileService: FileUploadService, private router: Router) {}
 
   ngOnInit(): void {}
@@ -27,10 +37,7 @@ export class UploadFileCardComponent implements OnInit {
     if (this.file) {
       this.fileService
         .uploadFile(this.file, this.predictionType)
-        // .subscribe(() => this.router.navigate(['/', 'one-year']));
-        .subscribe(() => {
-          if (false) this.router.navigate(['/', 'one-year']);
-        });
+        .subscribe(() => this.router.navigate(['/', 'one-year']));
     }
   }
 }
