@@ -29,11 +29,14 @@ export class ProjectionsService {
             title,
             cells: interpolatedData.slice(-12).map((entry) => {
                 const date = entry.date;
-                const currentAmount = getCurrentAmount(interpolatedData, entry);
-                const previousAmount = getPreviousAmount(
+                const currentAmount = +getCurrentAmount(
                     interpolatedData,
                     entry
-                );
+                ).toFixed(2);
+                const previousAmount = +getPreviousAmount(
+                    interpolatedData,
+                    entry
+                ).toFixed(2);
                 const percentage = +(
                     (currentAmount * 100) /
                     previousAmount

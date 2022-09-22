@@ -21,6 +21,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { ChartCardComponent } from './chart/chart-card.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     OneYearTableComponent,
     MainComponent,
     UploadFileCardComponent,
+    ChartCardComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +48,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatInputModule,
     MatSelectModule,
     MatOptionModule,
+    NgApexchartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

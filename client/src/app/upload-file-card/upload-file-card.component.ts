@@ -13,6 +13,7 @@ const AlgorithmsOptions = [
   { value: AlgorithmEnum.MA4, viewValue: AlgorithmEnum.MA4 },
   { value: AlgorithmEnum.WEIGHTED_MA4, viewValue: AlgorithmEnum.WEIGHTED_MA4 },
   { value: AlgorithmEnum.LINEAR, viewValue: AlgorithmEnum.LINEAR },
+  { value: AlgorithmEnum.BEST, viewValue: AlgorithmEnum.BEST },
 ];
 
 @Component({

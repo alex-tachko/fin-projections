@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 export enum AlgorithmEnum {
   LAGRANGE = 'lagrange',
@@ -9,6 +9,7 @@ export enum AlgorithmEnum {
   MA4 = 'ma4',
   WEIGHTED_MA4 = 'w_ma4',
   LINEAR = 'linear',
+  BEST = 'best',
 }
 
 export enum FrequencyEnum {
@@ -16,14 +17,29 @@ export enum FrequencyEnum {
   QUARTERLY = 'quarterly',
 }
 
+export interface IDataCell {
+  date: Date;
+  previousAmount: number;
+  currentAmount: number;
+  percentage: number;
+}
+
+export interface IDataRow {
+  title: string;
+  cells: IDataCell[];
+  totalPreviousYear: number;
+  totalCurrentYear: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class FileUploadService {
   private readonly url = 'http://localhost:3000/api/projections';
-  private predictionData$ = new ReplaySubject();
+  // public  private predictionData$ = new ReplaySubject();
+  predictionData: IDataRow[] = [];
   public frequency = FrequencyEnum.MONTHLY;
-  public predictionType = AlgorithmEnum.LAGRANGE;
+  public predictionType = AlgorithmEnum.BEST;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -35,19 +51,23 @@ export class FileUploadService {
 
     return this.httpClient.post(`${this.url}/calculate-prediction`, form).pipe(
       tap((predictionData) => {
-        this.predictionData = predictionData;
+        this.predictionData = <IDataRow[]>predictionData;
         this.predictionType = algo;
       })
     );
   }
 
-  public getPredictedData$(): any {
-    return this.predictionData$.asObservable();
-  }
+  // public getPredictedData$(): Observable<IDataRow[]> {
+  //   return this.predictionData$.asObservable();
+  // }
 
-  public set predictionData(data: any) {
-    this.predictionData$.next(data);
-  }
+  // public getPredictedData(): IDataRow[] {
+  //   return this.predictionData;
+  // }
+
+  // public set predictionData(data: IDataRow[]) {
+  //   this.predictionData$.next(data);
+  // }
 
   public isMonthlyFrequency(): boolean {
     return this.frequency === FrequencyEnum.MONTHLY;
