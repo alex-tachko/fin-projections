@@ -3,10 +3,12 @@ import {Point} from "../dtos/point.interface";
 
 export class MovingAverageStrategy extends InterpolationStrategy {
     private monthToUseInAverage: number;
+    private isWeighted: boolean;
 
-    constructor(monthToUseInAverage: number) {
+    constructor(monthToUseInAverage: number, isWeighted = false) {
         super();
         this.monthToUseInAverage = monthToUseInAverage;
+        this.isWeighted = isWeighted;
     }
 
     getInterpolatedPoints(pointsToInterpolate: number[], knownPoints: Point[]): Point[] {
@@ -23,7 +25,12 @@ export class MovingAverageStrategy extends InterpolationStrategy {
             } else {
                 let movingAverage = 0;
                 for (let i = x - this.monthToUseInAverage; i < x; i++) {
-                    movingAverage += averageValues[i] / this.monthToUseInAverage;
+                    if (this.isWeighted) {
+                        const weightSum = (1 + this.monthToUseInAverage) * this.monthToUseInAverage / 2;
+                        movingAverage += averageValues[i] * (i - x + this.monthToUseInAverage + 1) / weightSum;
+                    } else {
+                        movingAverage += averageValues[i] / this.monthToUseInAverage;
+                    }
                 }
                 averageValues[x] = movingAverage;
             }

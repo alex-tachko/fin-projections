@@ -29,6 +29,7 @@ export class ProjectionsController {
             [AlgorithmEnum.MA2]: new MovingAverageStrategy(2),
             [AlgorithmEnum.MA3]: new MovingAverageStrategy(3),
             [AlgorithmEnum.MA4]: new MovingAverageStrategy(4),
+            [AlgorithmEnum.WEIGHTED_MA4]: new MovingAverageStrategy(4, true),
         }
 
         const strategy = strategyMap[algo];
