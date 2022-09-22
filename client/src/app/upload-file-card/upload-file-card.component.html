@@ -16,6 +16,17 @@
       </header>
     </section>
   </mat-card-content>
+
+  <h4>Please select the algorithm</h4>
+  <mat-form-field appearance="fill">
+    <mat-label>Predictions algorithm</mat-label>
+    <mat-select [(value)]="predictionType">
+      <mat-option *ngFor="let algo of algos" [value]="algo.value">
+        {{ algo.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <div class="pb-3">
     <mat-card-actions class="actions">
       <button

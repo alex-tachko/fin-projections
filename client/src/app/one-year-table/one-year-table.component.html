@@ -1,42 +1,27 @@
-<table mat-table [dataSource]="data" class="mat-elevation-z8">
-
-  <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
-
-  <!-- Position Column -->
-
-  <!-- Name Column -->
+<table mat-table [dataSource]="data$ | async" class="mat-elevation-z8">
   <ng-container matColumnDef="title">
-    <th mat-header-cell *matHeaderCellDef> Title </th>
-    <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+    <th mat-header-cell *matHeaderCellDef>Title</th>
+    <td mat-cell *matCellDef="let element">{{ element.title }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="cells">
-    <th mat-header-cell *matHeaderCellDef> cells </th>
+  <ng-container
+    matColumnDef="{{ innerColumn }}"
+    *ngFor="let innerColumn of freq_columns; let indexOfelement = index"
+  >
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ innerColumn }}</th>
     <td mat-cell *matCellDef="let element">
-          <table #innerTables mat-table [dataSource]="element.addresses">
-            <ng-container matColumnDef="{{innerColumn}}" *ngFor="let innerColumn of innerDisplayedColumns;let indexOfelement=index;">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{innerColumn}} </th>
-              <td mat-cell *matCellDef="let element"> {{element[innerColumn]}} </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="innerDisplayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: innerDisplayedColumns;"></tr>
-          </table>
+      {{ element.cells[indexOfelement].currentAmount.toFixed(2) }}
     </td>
   </ng-container>
 
-  <!-- Weight Column -->
-  <ng-container matColumnDef="totalLastYear">
-    <th mat-header-cell *matHeaderCellDef> TotalLastYear </th>
-    <td mat-cell *matCellDef="let element"> {{element.totalLastYear}} </td>
-  </ng-container>
-
   <!-- Symbol Column -->
-  <ng-container matColumnDef="totalCurrentYear">
-    <th mat-header-cell *matHeaderCellDef> Total Curent year </th>
-    <td mat-cell *matCellDef="let element"> {{element.totalCurrentYear}} </td>
+  <ng-container matColumnDef="totals">
+    <th mat-header-cell *matHeaderCellDef>Totals</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.totalCurrentYear.toFixed(2) }}
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>

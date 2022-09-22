@@ -1,87 +1,55 @@
 import { Component, OnInit } from '@angular/core';
+import { EMPTY, Observable } from 'rxjs';
+import { FileUploadService } from '../services/file-upload.service';
 
-export interface cell {
-  name: string;
+export interface ICell {
   date: string;
   previousPeriodAmount: number;
   currentAmount: number;
   percentage: string;
 }
 
-export interface PeriodicElement {
+export interface IRow {
   title: string;
-  position: number;
-  cells: cell[];
+  cells: ICell[];
   totalLastYear: number;
   totalCurrentYear: number;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    position: 1,
-    title: 'test',
-    cells: [
-      {
-        name: 'Jan',
-        date: '2022-01-22',
-        previousPeriodAmount: 1000,
-        currentAmount: 1000,
-        percentage: '20%',
-      },
-    ],
-    totalLastYear: 100000,
-    totalCurrentYear: 10000,
-  },
-  {
-    position: 2,
-    title: 'test',
-    cells: [
-      {
-        name: 'Jan',
-        date: '2022-01-22',
-        previousPeriodAmount: 1000,
-        currentAmount: 1000,
-        percentage: '20%',
-      },
-    ],
-    totalLastYear: 100000,
-    totalCurrentYear: 10000,
-  },
+const monthlyColumns: string[] = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'Maj',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
+
+const quarterlyColumns: string[] = ['QTR 1', 'QTR 2', 'QTR 3', 'QTR 4'];
 
 @Component({
   selector: 'app-one-year-table',
   templateUrl: './one-year-table.component.html',
   styleUrls: ['./one-year-table.component.scss'],
 })
-export class OneYearTableComponent {
-  displayedColumns: string[] = [
-    'cells',
-    'title',
-    'totalLastYear',
-    'totalCurrentYear',
-  ];
-  innerDisplayedColumns: string[] = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'Maj',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  columnName: string[] = [
-    'Month:',
-    'name',
-    'date',
-    'previousPeriodAmount',
-    'currentAmount',
-    'percentage',
-  ];
-  data = ELEMENT_DATA;
+export class OneYearTableComponent implements OnInit {
+  public data$: Observable<any> = EMPTY;
+  public displayedColumns: string[] = [];
+  public freq_columns: string[] = [];
+
+  constructor(private fileService: FileUploadService) {}
+
+  ngOnInit() {
+    this.data$ = this.fileService.getPredictedData$();
+    this.freq_columns = this.fileService.isMonthlyFrequency()
+      ? monthlyColumns
+      : quarterlyColumns;
+    this.displayedColumns = ['title', ...this.freq_columns, 'totals'];
+  }
 }
