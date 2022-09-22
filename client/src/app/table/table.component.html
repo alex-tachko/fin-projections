@@ -1,0 +1,7 @@
+<mat-table [dataSource]="dataSource">
+  <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
+    <th mat-header-cell *matHeaderCellDef>
+      {{ col.label }}
+    </th>
+  </ng-container>
+</mat-table>
