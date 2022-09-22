@@ -13,9 +13,17 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MainComponent } from './main/main.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { UploadFileCardComponent } from './upload-file-card/upload-file-card.component';
 
 @NgModule({
-  declarations: [AppComponent, OneYearTableComponent, MainComponent],
+  declarations: [
+    AppComponent,
+    OneYearTableComponent,
+    MainComponent,
+    UploadFileCardComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -25,6 +33,8 @@ import { MainComponent } from './main/main.component';
     MatListModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
+    MatInputModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

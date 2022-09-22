@@ -1,2 +1,5 @@
 /.idea/
 /client/node_modules/
+/client/.angular/
+node_modules
+.angular/

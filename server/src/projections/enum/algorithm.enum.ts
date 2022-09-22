@@ -7,3 +7,8 @@ export enum AlgorithmEnum {
     LINEAR = 'linear',
     BEST = 'best'
 }
+
+export enum FrequencyEnum {
+    MONTHLY = 'monthly',
+    QUARTERLY = 'quarterly',
+}
