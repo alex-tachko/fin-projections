@@ -1,8 +1,8 @@
 import {InterpolationStrategy} from "./interpolation.strategy";
-import {Point} from "../dtos/point.interface";
+import {Point} from "../interfaces/point.interface";
 
-export class LagrangeStrategy extends InterpolationStrategy{
-    getInterpolatedPoint(x: number, knownPoints: Point[]): Point {
+export class LagrangeStrategy extends InterpolationStrategy {
+    private getInterpolatedPoint(x: number, knownPoints: Point[]): Point {
         let lagrange_pol = 0;
         let basics_pol: number;
 
@@ -20,5 +20,9 @@ export class LagrangeStrategy extends InterpolationStrategy{
             x,
             y: Math.round(lagrange_pol),
         };
+    }
+
+    getInterpolatedPoints(pointsToInterpolate: number[], knownPoints: Point[]): Point[] {
+        return pointsToInterpolate.map(x => this.getInterpolatedPoint(x, knownPoints));
     }
 }

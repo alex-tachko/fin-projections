@@ -1,5 +1,5 @@
-import {Point} from "../dtos/point.interface";
+import {Point} from "../interfaces/point.interface";
 
 export abstract class InterpolationStrategy {
-    public abstract getInterpolatedPoint(x: number, knownPoints: Point[]): Point;
+    public abstract getInterpolatedPoints(pointsToInterpolate: number[], knownPoints: Point[]): Point[];
 }
