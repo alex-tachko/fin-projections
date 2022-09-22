@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { MainComponent } from './main/main.component';
 import { OneYearTableComponent } from './one-year-table/one-year-table.component';
+import { UploadFileCardComponent } from './upload-file-card/upload-file-card.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,7 @@ const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'one-year' },
       { path: 'one-year', component: OneYearTableComponent },
+      { path: 'upload', component: UploadFileCardComponent },
       { path: 'home', component: HomeComponent },
     ],
   },
