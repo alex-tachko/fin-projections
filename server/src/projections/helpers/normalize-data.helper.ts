@@ -1,26 +1,27 @@
 import {FinancialEntry} from "../dtos/financial-entry.dto";
 import {Point} from "../dtos/point.interface";
+import {addMonthsToDate} from "./add-month-to-date.helper";
 
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+export const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+export const DAYS_IN_MONTH = 28;
 
-const normalizeAmounts = (amounts: number[]): number[] => {
+export const normalizeAmounts = (amounts: number[]): number[] => {
     // TODO Add normalization
     return amounts;
 };
 
-const revertAmountNormalization = (amount: number) => {
+export const revertAmountNormalization = (amount: number) => {
     return amount;
 }
 
-const normalizeDates = (dates: Date[]): number[] => {
+export const normalizeDates = (dates: Date[]): number[] => {
     const minDate = dates[0];
-    return dates.map(date => Math.trunc((+date - +minDate) / ONE_DAY_MS));
+    return dates.map(date => (date.getFullYear() - minDate.getFullYear()) * 12 + (date.getMonth() - minDate.getMonth()));
 }
 
-const revertDateNormalization = (x: number, minDate: Date): Date => {
-    return new Date(x * ONE_DAY_MS + +minDate);
+export const revertDateNormalization = (x: number, minDate: Date): Date => {
+    return addMonthsToDate(minDate, x);
 }
-
 
 export const normalizeData = (data: FinancialEntry[]): Point[] => {
     const xCoordinates = normalizeDates(data.map(({date}) => date));

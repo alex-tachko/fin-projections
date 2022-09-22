@@ -18,7 +18,7 @@ export class LagrangeStrategy extends InterpolationStrategy{
         }
         return {
             x,
-            y: lagrange_pol,
+            y: Math.round(lagrange_pol),
         };
     }
 }
