@@ -29,10 +29,6 @@ async function bootstrap(): Promise<void> {
 
     useGlobalValidationPipe(app);
 
-    app.use('/api/health', (req, res) => {
-        res.send('healthy');
-    });
-
     const config = new DocumentBuilder()
         .setTitle('Hackathon API')
         .setVersion('1.0')

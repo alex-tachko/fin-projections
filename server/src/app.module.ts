@@ -1,10 +1,8 @@
-import { Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
+import {Module} from '@nestjs/common';
+import {ProjectionsModule} from './projections/projections.module';
 
 @Module({
-    imports: [
-        UserModule
-    ],
+    imports: [ProjectionsModule],
     controllers: [],
     providers: [],
 })
