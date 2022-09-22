@@ -6,3 +6,8 @@ export enum AlgorithmEnum {
     WEIGHTED_MA4 = 'w_ma4',
     LINEAR = 'linear',
 }
+
+export enum FrequencyEnum {
+    MONTHLY = 'monthly',
+    QUARTERLY = 'quarterly',
+}

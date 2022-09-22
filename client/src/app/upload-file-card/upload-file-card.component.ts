@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { FileUploadService } from '../services/file-upload.service';
+import {
+  AlgorithmEnum,
+  FileUploadService,
+} from '../services/file-upload.service';
 
 @Component({
   selector: 'app-upload-file-card',
@@ -10,7 +13,7 @@ import { FileUploadService } from '../services/file-upload.service';
 })
 export class UploadFileCardComponent implements OnInit {
   public file: File | null = null;
-  public predictionType = 'lagrange';
+  public predictionType = AlgorithmEnum.LAGRANGE;
   constructor(private fileService: FileUploadService, private router: Router) {}
 
   ngOnInit(): void {}
@@ -24,7 +27,10 @@ export class UploadFileCardComponent implements OnInit {
     if (this.file) {
       this.fileService
         .uploadFile(this.file, this.predictionType)
-        .subscribe(() => this.router.navigate(['/', 'one-year']));
+        // .subscribe(() => this.router.navigate(['/', 'one-year']));
+        .subscribe(() => {
+          if (false) this.router.navigate(['/', 'one-year']);
+        });
     }
   }
 }
