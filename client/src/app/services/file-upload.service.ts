@@ -42,8 +42,22 @@ export class FileUploadService {
   public frequency = FrequencyEnum.MONTHLY;
   public predictionType = AlgorithmEnum.WEIGHTED_MA4;
   public isLoaded = false;
+  public percent = '';
 
   constructor(private httpClient: HttpClient) {}
+
+  downloadFile({
+    isTemplate = false,
+  }: {
+    isTemplate: boolean;
+  }): Observable<any> {
+    const params = {
+      isTemplate,
+      predictionType: this.predictionType,
+      percent: this.percent,
+    };
+    return this.httpClient.get<IDataRow[]>(`${this.url}/download`, { params });
+  }
 
   parseFile(file: File): Observable<any> {
     const form = new FormData();
@@ -60,9 +74,9 @@ export class FileUploadService {
 
   calculatePrediction(
     algo: AlgorithmEnum,
-    { percent }: { percent: string }
+    { percent, fullData }: { percent: string; fullData: boolean }
   ): Observable<IDataRow[]> {
-    const params = { algo, percent };
+    const params = { algo, percent, fullData };
 
     return this.httpClient
       .get<IDataRow[]>(`${this.url}/calculate-prediction`, { params })
@@ -70,6 +84,7 @@ export class FileUploadService {
         tap((predictionData) => {
           this.predictionData = <IDataRow[]>predictionData;
           this.predictionType = algo;
+          this.percent = percent;
         })
       );
   }

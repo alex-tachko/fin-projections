@@ -25,6 +25,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { ChartCardComponent } from './chart/chart-card.component';
 import { TableCardComponent } from './table-card/table-card.component';
 import { FormsModule } from '@angular/forms';
+import { DownloadComponent } from './download/download.component';
+import { FiveYearsComponent } from './five-years/five-years.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { FormsModule } from '@angular/forms';
     UploadFileCardComponent,
     ChartCardComponent,
     TableCardComponent,
+    DownloadComponent,
+    FiveYearsComponent,
   ],
   imports: [
     BrowserModule,

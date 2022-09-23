@@ -5,7 +5,7 @@ export enum AlgorithmEnum {
     MA4 = 'ma4',
     WEIGHTED_MA4 = 'w_ma4',
     LINEAR = 'linear',
-    BEST = 'best'
+    BEST = 'best',
 }
 
 export enum FrequencyEnum {

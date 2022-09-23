@@ -6,42 +6,17 @@ import {
 } from '../services/file-upload.service';
 import { ApexAxisChartSeries } from 'ng-apexcharts';
 import { take } from 'rxjs';
-
-export interface ICell {
-  date: string;
-  previousPeriodAmount: number;
-  currentAmount: number;
-  percentage: string;
-}
-
-export interface IRow {
-  title: string;
-  cells: ICell[];
-  totalLastYear: number;
-  totalCurrentYear: number;
-}
-
-export const AlgorithmsOptions = [
-  { value: AlgorithmEnum.LAGRANGE, viewValue: AlgorithmEnum.LAGRANGE },
-  { value: AlgorithmEnum.MA2, viewValue: AlgorithmEnum.MA2 },
-  { value: AlgorithmEnum.MA3, viewValue: AlgorithmEnum.MA3 },
-  { value: AlgorithmEnum.MA4, viewValue: AlgorithmEnum.MA4 },
-  { value: AlgorithmEnum.WEIGHTED_MA4, viewValue: AlgorithmEnum.WEIGHTED_MA4 },
-  { value: AlgorithmEnum.LINEAR, viewValue: AlgorithmEnum.LINEAR },
-  { value: AlgorithmEnum.BEST, viewValue: AlgorithmEnum.BEST },
-  { value: AlgorithmEnum.PERCENT, viewValue: AlgorithmEnum.PERCENT },
-];
-
-export interface IMetricOption {
-  title: string;
-}
+import {
+  AlgorithmsOptions,
+  IMetricOption,
+} from '../one-year-table/one-year-table.component';
 
 @Component({
-  selector: 'app-one-year-table',
-  templateUrl: './one-year-table.component.html',
-  styleUrls: ['./one-year-table.component.scss'],
+  selector: 'app-five-years',
+  templateUrl: './five-years.component.html',
+  styleUrls: ['./five-years.component.scss'],
 })
-export class OneYearTableComponent implements OnInit {
+export class FiveYearsComponent implements OnInit {
   public AlgorithmEnum = AlgorithmEnum;
   public predictionType = AlgorithmEnum.MA3;
   public percent = '';
@@ -73,7 +48,7 @@ export class OneYearTableComponent implements OnInit {
     const params: { percent: string; fullData: boolean } = {
       percent:
         this.predictionType === AlgorithmEnum.PERCENT ? this.percent : '',
-      fullData: false,
+      fullData: true,
     };
     this.fileService
       .calculatePrediction(this.predictionType, params)
@@ -108,14 +83,25 @@ export class OneYearTableComponent implements OnInit {
       const chartData = [
         {
           name: 'Predicted year',
-          data: selectedMetricData.cells.map((cell) => cell.currentAmount),
+          data: selectedMetricData.cells.map((cell, index, array) => {
+            const y = index > array.length - 13 ? cell.currentAmount : null;
+            const date = new Date(cell.date);
+            const x = `${date.getFullYear()}-${date.getMonth() + 1}`;
+            return { x, y };
+          }),
         },
         {
-          name: 'Previous year',
-          data: selectedMetricData.cells.map((cell) => cell.previousAmount),
+          name: 'Previous years',
+          data: selectedMetricData.cells.map((cell, index, array) => {
+            const y = index <= array.length - 13 ? cell.currentAmount : null;
+            const date = new Date(cell.date);
+            const x = `${date.getFullYear()}-${date.getMonth() + 1}`;
+            return { x, y };
+          }),
         },
       ];
       this.chartData = chartData;
+      console.log('chartData');
     }
   }
 }

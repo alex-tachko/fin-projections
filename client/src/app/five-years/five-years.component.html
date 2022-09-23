@@ -1,0 +1,55 @@
+<ng-container *ngIf="isLoaded">
+  <div class="selects flex">
+    <div class="dropdown">
+      <h4>Please select a metric</h4>
+      <mat-form-field appearance="fill">
+        <mat-label>Metrics</mat-label>
+        <mat-select [(value)]="selectedMetric">
+          <mat-option *ngFor="let metric of metrics" [value]="metric.title">
+            {{ metric.title }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="flex">
+      <div class="dropdown">
+        <h4>Please select an algorithm</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>Predictions algorithms</mat-label>
+          <mat-select [(value)]="predictionType">
+            <mat-option *ngFor="let algo of algos" [value]="algo.value">
+              {{ algo.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="dropdown" *ngIf="predictionType === AlgorithmEnum.PERCENT">
+        <h4>Please enter percent</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>Percent</mat-label>
+          <input matInput [(ngModel)]="percent" />
+        </mat-form-field>
+      </div>
+
+      <button mat-button class="bg-sky-400 button" (click)="getData()">
+        Calculate
+      </button>
+      <button mat-button class="bg-sky-400 button" (click)="clearData()">
+        Clear Data
+      </button>
+    </div>
+  </div>
+  <div class="top-padding">
+    <app-chart-card [chartData]="chartData" [fullData]="true"></app-chart-card>
+  </div>
+  <!-- <div class="top-padding bottom-padding">
+    <app-table-card [data]="data"></app-table-card>
+  </div> -->
+</ng-container>
+<ng-container *ngIf="!isLoaded" class="top-padding">
+  Please upload your files to make predictions!
+  <button mat-button class="bg-sky-400 button" [routerLink]="'/upload'">
+    Upload Files
+  </button>
+</ng-container>

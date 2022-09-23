@@ -38,32 +38,17 @@ export class ChartCardComponent implements OnInit {
   chart!: ChartComponent;
 
   @Input() public chartData: ApexAxisChartSeries = <ApexAxisChartSeries>{};
+  @Input() public fullData = false;
 
   public chartOptions: ChartOptions = <ChartOptions>{};
 
   constructor() {
-    this.chartOptions = <ChartOptions>{
-      // series: [
-      //   {
-      //     name: 'Session Duration',
-      //     data: [45, 52, 38, 24, 33, 26, 21, 20, 6, 8, 15, 10],
-      //   },
-      //   {
-      //     name: 'Page Views',
-      //     data: [35, 41, 62, 42, 13, 18, 29, 37, 36, 51, 32, 35],
-      //   },
-      //   {
-      //     name: 'Total Visits',
-      //     data: [87, 57, 74, 99, 75, 38, 62, 47, 82, 56, 45, 47],
-      //   },
-      // ],
-      chart: {
-        height: 350,
-        type: 'line',
-      },
+    const options = <ChartOptions>{
       dataLabels: {
         enabled: false,
       },
+      //
+      //
       stroke: {
         width: 5,
         curve: 'straight',
@@ -89,12 +74,6 @@ export class ChartCardComponent implements OnInit {
           sizeOffset: 6,
         },
       },
-      xaxis: {
-        labels: {
-          trim: false,
-        },
-        categories: monthlyColumns,
-      },
       tooltip: {
         y: [
           {
@@ -117,6 +96,42 @@ export class ChartCardComponent implements OnInit {
         borderColor: '#f1f1f1',
       },
     };
+
+    if (this.fullData) {
+      // const categories = this.chartData.map((value))
+      options.xaxis = {
+        type: 'category',
+        labels: {
+          formatter: function (val) {
+            return val;
+          },
+        },
+      };
+      options.chart = {
+        height: 350,
+        type: 'line',
+        zoom: {
+          type: 'x',
+          enabled: true,
+          autoScaleYaxis: true,
+        },
+        toolbar: {
+          autoSelected: 'zoom',
+        },
+      };
+    } else {
+      options.chart = {
+        height: 350,
+        type: 'line',
+      };
+      options.xaxis = {
+        labels: {
+          trim: false,
+        },
+        categories: monthlyColumns,
+      };
+    }
+    this.chartOptions = options;
   }
 
   ngOnInit(): void {}

@@ -21,26 +21,27 @@ export class ProjectionsService {
     public getInterpolatedData(
         strategy: InterpolationStrategy,
         title: string,
-        data: FinancialEntry[]
+        data: FinancialEntry[],
+        fullData = false
     ): IDataRow {
         const interpolatedData = this.interpolate(strategy, data);
+        const slicedData = fullData
+            ? interpolatedData
+            : interpolatedData.slice(-12);
 
         return {
             title,
-            cells: interpolatedData.slice(-12).map((entry) => {
+            cells: slicedData.map((entry) => {
                 const date = entry.date;
                 const currentAmount = +getCurrentAmount(
                     interpolatedData,
                     entry
                 ).toFixed(1);
-                const previousAmount = +getPreviousAmount(
-                    interpolatedData,
-                    entry
-                ).toFixed(1);
-                const percentage = +(
-                    (currentAmount * 100) / previousAmount -
-                    100
-                ).toFixed(1);
+                const previousAm = getPreviousAmount(interpolatedData, entry);
+                const previousAmount = previousAm ? +previousAm.toFixed(1) : 0;
+                const percentage = previousAm
+                    ? +((currentAmount * 100) / previousAmount - 100).toFixed(1)
+                    : 100;
 
                 return {
                     date,

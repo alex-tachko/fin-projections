@@ -15,7 +15,7 @@ import { AlgorithmEnum, FrequencyEnum } from './enum/algorithm.enum';
 import { InterpolatePayload } from './dtos/interpolate-request.dto';
 import { IDataRow, IParcedDataRow } from './interfaces/data-row.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { read, utils } from 'xlsx';
+import { read, utils, writeFile } from 'xlsx';
 import { FinancialEntry } from './dtos/financial-entry.dto';
 import { MovingAverageStrategy } from './strategies/moving-average.strategy';
 import { LinearStrategy } from './strategies/linear.strategy';
@@ -104,8 +104,10 @@ export class ProjectionsController {
     @ApiOperation({ description: 'Get predicted values' })
     calculatePrediction(
         @Query('algo') algo: AlgorithmEnum,
-        @Query('percent') percent: string
+        @Query('percent') percent: string,
+        @Query('fullData') fullData: boolean
     ) {
+        console.log('fullData', fullData);
         const parsedData = this.dataParcerService.getParcedData();
 
         const strategyMap = {
@@ -125,10 +127,60 @@ export class ProjectionsController {
                 return this.projectionsService.getInterpolatedData(
                     strategy,
                     title,
-                    cells
+                    cells,
+                    fullData
                 );
             }) || [];
 
         return interpolatedMetrics;
     }
+
+    @Get('download')
+    @HttpCode(200)
+    @ApiOperation({ description: 'Download predicted file' })
+    downloadFile(
+        @Query('predictionType') predictionType: AlgorithmEnum,
+        @Query('percent') percent: string,
+        @Query('isTemplate') isTemplate: boolean
+    ) {
+        const interpolatedMetrics = this.calculatePrediction(
+            predictionType,
+            percent,
+            false
+        );
+
+        const downloadData = interpolatedMetrics;
+
+        var wb = utils.book_new();
+        // var ws = XLSX.utils.aoa_to_sheet([
+        //     ["SheetJS", "<3","விரிதாள்"],
+        //     [72,,"Arbeitsblätter"],
+        //     [,62,"数据"],
+        //     [true,false,],
+        // ]);
+        const sheet = utils.aoa_to_sheet(
+            mapInterpolDataToDownload(interpolatedMetrics)
+        );
+        utils.book_append_sheet(wb, sheet, 'Sheet1');
+
+        // return writeFile(wb, 'Predicted year');
+        console.log('\n\n sheet \n', sheet);
+        // console.log('\n\n sheet \n', sheet);
+        const file = writeFile(wb, 'Predicted year');
+
+        return file;
+    }
 }
+
+const mapInterpolDataToDownload = (
+    interpolatedMetrics: IDataRow[]
+): string[][] => {
+    const downloadData = [];
+    const dates = ['', ...interpolatedMetrics[0].cells.map(({ date }) => date)];
+    downloadData.push(dates);
+    interpolatedMetrics.forEach((metric) => {
+        const mappedAmounts = metric.cells.map((cell) => cell.currentAmount);
+        downloadData.push([metric.title, ...mappedAmounts]);
+    });
+    return downloadData;
+};
