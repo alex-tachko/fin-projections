@@ -65,24 +65,29 @@ export class ProjectionsController {
     @ApiOperation({ description: 'Get predicted values' })
     @UseInterceptors(FileInterceptor('excel'))
     parseFile(
-        @UploadedFile() excel: Express.Multer.File,
-        @Body('frequency') frequency: FrequencyEnum = FrequencyEnum.MONTHLY
+        @UploadedFile() excel: Express.Multer.File
+        // @Body('frequency') frequency: FrequencyEnum = FrequencyEnum.MONTHLY
     ) {
-        const workbook = read(excel.buffer);
-        const data = utils.sheet_to_json(
+        const workbook = read(excel.buffer, {
+            cellText: false,
+            cellDates: true,
+        });
+        const data: string[][] = utils.sheet_to_json(
             workbook.Sheets[workbook.SheetNames[0]],
             { header: 1 }
         );
 
-        const year =
-            excel.originalname.substr(0, excel.originalname.lastIndexOf('.')) ||
-            excel.originalname;
+        const parsedData = this.dataParcerService.parseData(data);
 
-        const parsedData = this.dataParcerService.parseData(
-            data,
-            frequency,
-            year
-        );
+        // const year =
+        //     excel.originalname.substr(0, excel.originalname.lastIndexOf('.')) ||
+        //     excel.originalname;
+
+        // const parsedData = this.dataParcerService.parseData(
+        // data
+        // frequency,
+        // year
+        // );
 
         return parsedData;
     }
