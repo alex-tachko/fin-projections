@@ -112,7 +112,6 @@ export class ProjectionsController {
         @Query('percent') percent: string,
         @Query('fullData') fullData: boolean
     ) {
-        console.log('fullData', fullData);
         const parsedData = this.dataParcerService.getParcedData();
 
         const strategyMap = {
