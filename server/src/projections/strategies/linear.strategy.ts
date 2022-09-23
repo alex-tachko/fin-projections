@@ -17,7 +17,7 @@ export class LinearStrategy extends InterpolationStrategy {
             if (knownValues[x] !== undefined) {
                 interpolatedValues[x] = knownValues[x];
             } else {
-                interpolatedValues[x] = interpolatedValues[x - 1] + 6 * averageDelta * (Math.random() - 1 / 3);
+                interpolatedValues[x] = interpolatedValues[x - 1] + averageDelta
             }
 
             interpolatedPoints.push({x, y: interpolatedValues[x]});

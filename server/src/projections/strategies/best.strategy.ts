@@ -7,7 +7,7 @@ export class BestStrategy extends InterpolationStrategy {
         let deltaSum = 0;
 
         for (let i = 1; i < knownPoints.length; i++) {
-            const weight = Math.pow(i, 3/2);
+            const weight = Math.pow(i, 3 / 2);
             weightSum += weight;
             deltaSum += weight * (knownPoints[i].y - knownPoints[i - 1].y)
                 / (knownPoints[i].x - knownPoints[i - 1].x);
@@ -21,13 +21,13 @@ export class BestStrategy extends InterpolationStrategy {
         let deltaSum = 0;
         let hasDirectionSwitched = false;
 
-        for (let i = knownPoints.length - 1; i >= 2 ; i--) {
+        for (let i = knownPoints.length - 1; i >= 2; i--) {
             const delta1 = (knownPoints[i].y - knownPoints[i - 1].y)
                 / (knownPoints[i].x - knownPoints[i - 1].x);
             const delta2 = (knownPoints[i - 1].y - knownPoints[i - 2].y)
                 / (knownPoints[i - 1].x - knownPoints[i - 2].x);
 
-            const weight = Math.pow(i, 3);
+            const weight = Math.pow(i, 3 / 2);
 
             weightSum += weight;
 
@@ -36,7 +36,7 @@ export class BestStrategy extends InterpolationStrategy {
                 continue;
             }
 
-            if(!hasDirectionSwitched) {
+            if (!hasDirectionSwitched) {
                 deltaSum += weight * (delta1 - delta2);
             }
         }
