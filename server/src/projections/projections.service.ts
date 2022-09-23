@@ -32,26 +32,31 @@ export class ProjectionsService {
                 const currentAmount = +getCurrentAmount(
                     interpolatedData,
                     entry
-                ).toFixed(2);
+                ).toFixed(1);
                 const previousAmount = +getPreviousAmount(
                     interpolatedData,
                     entry
-                ).toFixed(2);
+                ).toFixed(1);
                 const percentage = +(
-                    (currentAmount * 100) /
-                    previousAmount
-                ).toFixed(2);
+                    (currentAmount * 100) / previousAmount -
+                    100
+                ).toFixed(1);
 
                 return {
                     date,
                     previousAmount,
                     currentAmount,
-                    percentage,
+                    percentage: this.formatPercentage(percentage),
                 };
             }),
-            totalCurrentYear: getTotalCurrentYear(interpolatedData),
-            totalPreviousYear: getTotalPreviousYear(interpolatedData),
+            totalCurrentYear: +getTotalCurrentYear(interpolatedData).toFixed(1),
+            totalPreviousYear:
+                +getTotalPreviousYear(interpolatedData).toFixed(1),
         };
+    }
+
+    private formatPercentage(percentage: number): string {
+        return percentage > 0 ? `+${percentage}%` : `${percentage}%`;
     }
 
     private interpolate(

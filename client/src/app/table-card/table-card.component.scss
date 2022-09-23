@@ -1,3 +1,28 @@
 .table-container {
   width: 100%;
 }
+
+.header-cell,
+.amount-cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.red {
+  color: #f3626a;
+}
+
+.green {
+  color: #00bf71;
+}
+
+.orange {
+  color: #ffba49;
+}
+
+.percentage {
+  margin-left: 5px;
+  font-size: 12px;
+}
