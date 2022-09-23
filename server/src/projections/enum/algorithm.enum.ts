@@ -6,6 +6,7 @@ export enum AlgorithmEnum {
     WEIGHTED_MA4 = 'w_ma4',
     LINEAR = 'linear',
     BEST = 'best',
+    PERCENTAGE = 'percent'
 }
 
 export enum FrequencyEnum {

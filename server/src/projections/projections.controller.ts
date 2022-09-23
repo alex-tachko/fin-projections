@@ -21,6 +21,7 @@ import { MovingAverageStrategy } from './strategies/moving-average.strategy';
 import { LinearStrategy } from './strategies/linear.strategy';
 import { BestStrategy } from './strategies/best.strategy';
 import { DataParcerService } from './data-parcer.service';
+import {PercentageStrategy} from "./strategies/percentage.strategy";
 
 @ApiTags('Financial Projections')
 @Controller('projections')
@@ -118,6 +119,7 @@ export class ProjectionsController {
             [AlgorithmEnum.WEIGHTED_MA4]: new MovingAverageStrategy(4, true),
             [AlgorithmEnum.LINEAR]: new LinearStrategy(),
             [AlgorithmEnum.BEST]: new BestStrategy(),
+            [AlgorithmEnum.PERCENTAGE]: new PercentageStrategy(+percent),
         };
 
         const strategy = strategyMap[algo];
