@@ -2,12 +2,15 @@ import {
     Body,
     Controller,
     Get,
+    Header,
     HttpCode,
     Post,
     Query,
+    Res,
     UploadedFile,
     UseInterceptors,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProjectionsService } from './projections.service';
 import { LagrangeStrategy } from './strategies/lagrange.strategy';
@@ -15,13 +18,14 @@ import { AlgorithmEnum, FrequencyEnum } from './enum/algorithm.enum';
 import { InterpolatePayload } from './dtos/interpolate-request.dto';
 import { IDataRow, IParcedDataRow } from './interfaces/data-row.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { read, utils, writeFile } from 'xlsx';
+import { read, utils, write, writeFile, writeFileXLSX } from 'xlsx';
 import { FinancialEntry } from './dtos/financial-entry.dto';
 import { MovingAverageStrategy } from './strategies/moving-average.strategy';
 import { LinearStrategy } from './strategies/linear.strategy';
 import { BestStrategy } from './strategies/best.strategy';
 import { DataParcerService } from './data-parcer.service';
-import {PercentageStrategy} from "./strategies/percentage.strategy";
+import { Readable } from 'stream';
+import { PercentageStrategy } from './strategies/percentage.strategy';
 
 @ApiTags('Financial Projections')
 @Controller('projections')
@@ -140,7 +144,9 @@ export class ProjectionsController {
     @Get('download')
     @HttpCode(200)
     @ApiOperation({ description: 'Download predicted file' })
-    downloadFile(
+    @Header('Content-Type', 'text/xlsx')
+    async downloadFile(
+        @Res() res: Response,
         @Query('predictionType') predictionType: AlgorithmEnum,
         @Query('percent') percent: string,
         @Query('isTemplate') isTemplate: boolean
@@ -153,24 +159,53 @@ export class ProjectionsController {
 
         const downloadData = interpolatedMetrics;
 
-        var wb = utils.book_new();
-        // var ws = XLSX.utils.aoa_to_sheet([
-        //     ["SheetJS", "<3","விரிதாள்"],
-        //     [72,,"Arbeitsblätter"],
-        //     [,62,"数据"],
-        //     [true,false,],
-        // ]);
+        // const wb = utils.book_new();
+
+        // const sheet = utils.aoa_to_sheet(
+        //     mapInterpolDataToDownload(interpolatedMetrics)
+        // );
+        // utils.book_append_sheet(wb, sheet, 'Sheet1');
+
+        // return writeFile(wb, 'Predicted year');
+        // console.log('\n\n sheet \n', sheet);
+        // console.log('\n\n sheet \n', sheet);
+        // const file = await writeFile(wb, 'Predicted_year2.xlsx');
+        // console.log(file);
+        // res.download(`${file}`);
+        // res.download(`Predicted_year2.xlsx`);
+
+        // const buffer = write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+        res.setHeader('Content-Type', 'application/octet-stream');
+
+        // const dataArray = [{
+        //   "id": 0,
+        //   "species": "elk",
+        //   "sex": "male"
+        // },{
+        //   "id": 1,
+        //   "species": "moose",
+        //   "sex": "female"
+        // }];
+
+        const wb = utils.book_new();
+        // const ws = XLSX.utils.json_to_sheet(dataArray);
         const sheet = utils.aoa_to_sheet(
             mapInterpolDataToDownload(interpolatedMetrics)
         );
-        utils.book_append_sheet(wb, sheet, 'Sheet1');
+        utils.book_append_sheet(wb, sheet, 'TestWB.xlsx');
 
-        // return writeFile(wb, 'Predicted year');
-        console.log('\n\n sheet \n', sheet);
-        // console.log('\n\n sheet \n', sheet);
-        const file = writeFile(wb, 'Predicted year');
+        const wbopts = {
+            type: 'base64',
+            bookType: 'xlsx',
+            bookSST: false,
+        } as any;
 
-        return file;
+        const wbout = write(wb, wbopts);
+
+        // console.log(wbout);
+
+        res.send(wbout);
     }
 }
 

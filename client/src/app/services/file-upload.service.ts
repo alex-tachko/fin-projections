@@ -56,7 +56,11 @@ export class FileUploadService {
       predictionType: this.predictionType,
       percent: this.percent,
     };
-    return this.httpClient.get<IDataRow[]>(`${this.url}/download`, { params });
+    return this.httpClient.get<IDataRow[]>(`${this.url}/download`, {
+      params,
+      responseType: 'text',
+      headers: { 'Content-Type': 'application/octet-stream' },
+    } as any);
   }
 
   parseFile(file: File): Observable<any> {

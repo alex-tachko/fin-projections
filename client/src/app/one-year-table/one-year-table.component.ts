@@ -43,7 +43,7 @@ export interface IMetricOption {
 })
 export class OneYearTableComponent implements OnInit {
   public AlgorithmEnum = AlgorithmEnum;
-  public predictionType = AlgorithmEnum.MA3;
+  public predictionType = AlgorithmEnum.BEST;
   public percent = '';
   public algos = AlgorithmsOptions;
   public isLoaded = false;
