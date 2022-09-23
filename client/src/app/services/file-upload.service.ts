@@ -10,6 +10,7 @@ export enum AlgorithmEnum {
   WEIGHTED_MA4 = 'w_ma4',
   LINEAR = 'linear',
   BEST = 'best',
+  PERCENT = 'percent',
 }
 
 export enum FrequencyEnum {
@@ -39,22 +40,38 @@ export class FileUploadService {
   // public  private predictionData$ = new ReplaySubject();
   predictionData: IDataRow[] = [];
   public frequency = FrequencyEnum.MONTHLY;
-  public predictionType = AlgorithmEnum.BEST;
+  public predictionType = AlgorithmEnum.WEIGHTED_MA4;
+  public isLoaded = false;
 
   constructor(private httpClient: HttpClient) {}
 
-  uploadFile(file: File, algo: AlgorithmEnum): Observable<any> {
+  parseFile(file: File): Observable<any> {
     const form = new FormData();
     form.append('excel', file);
-    form.append('algo', algo);
     form.append('frequency', this.frequency);
 
-    return this.httpClient.post(`${this.url}/calculate-prediction`, form).pipe(
-      tap((predictionData) => {
-        this.predictionData = <IDataRow[]>predictionData;
-        this.predictionType = algo;
-      })
-    );
+    return this.httpClient.post(`${this.url}/parse-file`, form);
+  }
+
+  clearData(): Observable<any> {
+    const body = {};
+    return this.httpClient.post(`${this.url}/clear-data`, body);
+  }
+
+  calculatePrediction(
+    algo: AlgorithmEnum,
+    { percent }: { percent: string }
+  ): Observable<IDataRow[]> {
+    const params = { algo, percent };
+
+    return this.httpClient
+      .get<IDataRow[]>(`${this.url}/calculate-prediction`, { params })
+      .pipe(
+        tap((predictionData) => {
+          this.predictionData = <IDataRow[]>predictionData;
+          this.predictionType = algo;
+        })
+      );
   }
 
   // public getPredictedData$(): Observable<IDataRow[]> {

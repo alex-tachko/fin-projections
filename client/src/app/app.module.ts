@@ -23,6 +23,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { ChartCardComponent } from './chart/chart-card.component';
+import { TableCardComponent } from './table-card/table-card.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -31,9 +33,11 @@ import { ChartCardComponent } from './chart/chart-card.component';
     MainComponent,
     UploadFileCardComponent,
     ChartCardComponent,
+    TableCardComponent,
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     MatTableModule,
     MatFormFieldModule,
     BrowserAnimationsModule,

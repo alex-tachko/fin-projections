@@ -1,3 +1,29 @@
 table {
-	width: 100%;
+  width: 100%;
+}
+
+.top-padding {
+  padding-top: 20px;
+}
+
+.bottom-padding {
+  padding-bottom: 20px;
+}
+
+.selects {
+  justify-content: space-between;
+
+  .dropdown {
+    margin-right: 20px;
+  }
+
+  .button {
+    height: 30px;
+  }
+}
+
+.flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }

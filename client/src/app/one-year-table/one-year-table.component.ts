@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FileUploadService, IDataRow } from '../services/file-upload.service';
+import {
+  AlgorithmEnum,
+  FileUploadService,
+  IDataRow,
+} from '../services/file-upload.service';
 import { ApexAxisChartSeries } from 'ng-apexcharts';
+import { take } from 'rxjs';
 
 export interface ICell {
   date: string;
@@ -16,22 +21,16 @@ export interface IRow {
   totalCurrentYear: number;
 }
 
-export const monthlyColumns: string[] = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'Maj',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+const AlgorithmsOptions = [
+  { value: AlgorithmEnum.LAGRANGE, viewValue: AlgorithmEnum.LAGRANGE },
+  { value: AlgorithmEnum.MA2, viewValue: AlgorithmEnum.MA2 },
+  { value: AlgorithmEnum.MA3, viewValue: AlgorithmEnum.MA3 },
+  { value: AlgorithmEnum.MA4, viewValue: AlgorithmEnum.MA4 },
+  { value: AlgorithmEnum.WEIGHTED_MA4, viewValue: AlgorithmEnum.WEIGHTED_MA4 },
+  { value: AlgorithmEnum.LINEAR, viewValue: AlgorithmEnum.LINEAR },
+  { value: AlgorithmEnum.BEST, viewValue: AlgorithmEnum.BEST },
+  { value: AlgorithmEnum.PERCENT, viewValue: AlgorithmEnum.PERCENT },
 ];
-
-const quarterlyColumns: string[] = ['QTR 1', 'QTR 2', 'QTR 3', 'QTR 4'];
 
 interface IMetricOption {
   title: string;
@@ -43,7 +42,14 @@ interface IMetricOption {
   styleUrls: ['./one-year-table.component.scss'],
 })
 export class OneYearTableComponent implements OnInit {
-  public data: IDataRow[] = [];
+  public AlgorithmEnum = AlgorithmEnum;
+  public predictionType = AlgorithmEnum.MA3;
+  public percent = '';
+  public algos = AlgorithmsOptions;
+  public isLoaded = false;
+
+  public data!: IDataRow[];
+  // public data$!: Observable<IDataRow[]>;
   public metrics: IMetricOption[] = [];
   public _selectedMetric: string = '';
   public get selectedMetric(): string {
@@ -56,20 +62,41 @@ export class OneYearTableComponent implements OnInit {
 
   public chartData: ApexAxisChartSeries = [];
 
-  public displayedColumns: string[] = [];
-  public freq_columns: string[] = [];
-
   constructor(private fileService: FileUploadService) {}
 
   ngOnInit() {
-    this.data = this.fileService.predictionData;
-    this.metrics = this.data.map(({ title }) => ({ title }));
-    this.selectedMetric = this.metrics[0]?.title;
+    this.isLoaded = this.fileService.isLoaded;
+    this.getData();
+  }
 
-    this.freq_columns = this.fileService.isMonthlyFrequency()
-      ? monthlyColumns
-      : quarterlyColumns;
-    this.displayedColumns = ['title', ...this.freq_columns, 'totals'];
+  getData() {
+    const params: { percent: string } = {
+      percent:
+        this.predictionType === AlgorithmEnum.PERCENT ? this.percent : '',
+    };
+    this.fileService
+      .calculatePrediction(this.predictionType, params)
+      .pipe(take(1))
+      .subscribe((data) => {
+        if (data?.length) {
+          this.data = data;
+          this.metrics = data.map(({ title }) => ({ title }));
+          this.selectedMetric = this.metrics[0]?.title;
+          this.isLoaded = true;
+        }
+      });
+  }
+
+  clearData() {
+    this.fileService
+      .clearData()
+      .pipe(take(1))
+      .subscribe(() => {
+        this.data = [];
+        this.metrics = [];
+        this.selectedMetric = '';
+        this.isLoaded = false;
+      });
   }
 
   setChartData(metric: string): void {

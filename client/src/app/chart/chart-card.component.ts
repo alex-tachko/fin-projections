@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { monthlyColumns } from '../one-year-table/one-year-table.component';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -13,6 +12,7 @@ import {
   ApexLegend,
   ChartComponent,
 } from 'ng-apexcharts';
+import { monthlyColumns } from '../table-card/table-card.component';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;

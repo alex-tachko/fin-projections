@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     Post,
     Query,
@@ -12,18 +13,22 @@ import { ProjectionsService } from './projections.service';
 import { LagrangeStrategy } from './strategies/lagrange.strategy';
 import { AlgorithmEnum, FrequencyEnum } from './enum/algorithm.enum';
 import { InterpolatePayload } from './dtos/interpolate-request.dto';
-import { IDataRow } from './interfaces/data-row.interface';
+import { IDataRow, IParcedDataRow } from './interfaces/data-row.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { read, utils } from 'xlsx';
 import { FinancialEntry } from './dtos/financial-entry.dto';
 import { MovingAverageStrategy } from './strategies/moving-average.strategy';
 import { LinearStrategy } from './strategies/linear.strategy';
-import {BestStrategy} from "./strategies/best.strategy";
+import { BestStrategy } from './strategies/best.strategy';
+import { DataParcerService } from './data-parcer.service';
 
 @ApiTags('Financial Projections')
 @Controller('projections')
 export class ProjectionsController {
-    constructor(private readonly service: ProjectionsService) {}
+    constructor(
+        private readonly projectionsService: ProjectionsService,
+        private readonly dataParcerService: DataParcerService
+    ) {}
 
     @Post('interpolate')
     @HttpCode(200)
@@ -44,20 +49,23 @@ export class ProjectionsController {
             [AlgorithmEnum.WEIGHTED_MA4]: new MovingAverageStrategy(4, true),
             [AlgorithmEnum.LINEAR]: new LinearStrategy(),
             [AlgorithmEnum.BEST]: new BestStrategy(),
-        }
+        };
 
         const strategy = strategyMap[algo];
 
-        return this.service.getInterpolatedData(strategy, title, data);
+        return this.projectionsService.getInterpolatedData(
+            strategy,
+            title,
+            data
+        );
     }
 
-    @Post('calculate-prediction')
+    @Post('parse-file')
     @HttpCode(200)
     @ApiOperation({ description: 'Get predicted values' })
     @UseInterceptors(FileInterceptor('excel'))
-    uploadFile(
+    parseFile(
         @UploadedFile() excel: Express.Multer.File,
-        @Body('algo') algo: AlgorithmEnum,
         @Body('frequency') frequency: FrequencyEnum = FrequencyEnum.MONTHLY
     ) {
         const workbook = read(excel.buffer);
@@ -69,7 +77,31 @@ export class ProjectionsController {
         const year =
             excel.originalname.substr(0, excel.originalname.lastIndexOf('.')) ||
             excel.originalname;
-        const parsedData = parseData(data, frequency, year);
+
+        const parsedData = this.dataParcerService.parseData(
+            data,
+            frequency,
+            year
+        );
+
+        return parsedData;
+    }
+
+    @Post('clear-data')
+    @HttpCode(200)
+    @ApiOperation({ description: 'Clear predicted values' })
+    clearData() {
+        this.dataParcerService.clearParcedData();
+    }
+
+    @Get('calculate-prediction')
+    @HttpCode(200)
+    @ApiOperation({ description: 'Get predicted values' })
+    calculatePrediction(
+        @Query('algo') algo: AlgorithmEnum,
+        @Query('percent') percent: string
+    ) {
+        const parsedData = this.dataParcerService.getParcedData();
 
         const strategyMap = {
             [AlgorithmEnum.LAGRANGE]: new LagrangeStrategy(),
@@ -78,51 +110,20 @@ export class ProjectionsController {
             [AlgorithmEnum.MA4]: new MovingAverageStrategy(4),
             [AlgorithmEnum.WEIGHTED_MA4]: new MovingAverageStrategy(4, true),
             [AlgorithmEnum.LINEAR]: new LinearStrategy(),
+            [AlgorithmEnum.BEST]: new BestStrategy(),
         };
 
         const strategy = strategyMap[algo];
 
-        const interpolatedMetrics = parsedData.map(({ title, cells }) => {
-            return this.service.getInterpolatedData(strategy, title, cells);
-        });
+        const interpolatedMetrics =
+            parsedData?.map(({ title, cells }) => {
+                return this.projectionsService.getInterpolatedData(
+                    strategy,
+                    title,
+                    cells
+                );
+            }) || [];
 
         return interpolatedMetrics;
     }
 }
-
-const monthsEnds = [
-    '-01-01',
-    '-02-01',
-    '-03-01',
-    '-04-01',
-    '-05-01',
-    '-06-01',
-    '-07-01',
-    '-08-01',
-    '-09-01',
-    '-10-01',
-    '-11-01',
-    '-12-01',
-];
-
-const quartersEnds = ['-03-01', '-06-01', '-09-01', '-12-01'];
-
-const parseData = (data: any, frequency: FrequencyEnum, year: string) => {
-    const datesEnds =
-        frequency === FrequencyEnum.MONTHLY ? monthsEnds : quartersEnds;
-    const dates = datesEnds.map((dateEnd) => new Date(`${year}${dateEnd}`));
-    const parsedData = [];
-
-    data.forEach((metric) => {
-        const parsedObj: Record<string, any> = { title: metric[0], cells: [] };
-        for (let i = 1; i <= dates.length; i++) {
-            parsedObj.cells[i - 1] = {
-                date: dates[i - 1],
-                amount: metric[i],
-            };
-        }
-        parsedData.push(parsedObj);
-    });
-
-    return parsedData;
-};
