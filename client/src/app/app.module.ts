@@ -27,6 +27,7 @@ import { TableCardComponent } from './table-card/table-card.component';
 import { FormsModule } from '@angular/forms';
 import { DownloadComponent } from './download/download.component';
 import { FiveYearsComponent } from './five-years/five-years.component';
+import { FiveYearsTableComponent } from './five-years-table/five-years-table.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { FiveYearsComponent } from './five-years/five-years.component';
     TableCardComponent,
     DownloadComponent,
     FiveYearsComponent,
+    FiveYearsTableComponent,
   ],
   imports: [
     BrowserModule,

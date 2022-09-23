@@ -43,9 +43,9 @@
   <div class="top-padding">
     <app-chart-card [chartData]="chartData" [fullData]="true"></app-chart-card>
   </div>
-  <!-- <div class="top-padding bottom-padding">
-    <app-table-card [data]="data"></app-table-card>
-  </div> -->
+  <div class="top-padding bottom-padding">
+    <app-five-years-table [data]="data"></app-five-years-table>
+  </div>
 </ng-container>
 <ng-container *ngIf="!isLoaded" class="top-padding">
   Please upload your files to make predictions!

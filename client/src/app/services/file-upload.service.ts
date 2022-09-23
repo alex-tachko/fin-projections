@@ -27,6 +27,7 @@ export interface IDataCell {
 
 export interface IDataRow {
   title: string;
+  columns?: string[];
   cells: IDataCell[];
   totalPreviousYear: number;
   totalCurrentYear: number;
